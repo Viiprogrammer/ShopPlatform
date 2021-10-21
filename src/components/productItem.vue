@@ -23,7 +23,8 @@ export default {
         html: this.params.fullDescription,
         text: !this.params.fullDescription ? this.params.description : undefined,
         showCloseButton: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+        ...this.params.image
       });
     }
   },
