@@ -17,16 +17,25 @@
         </th>
       </tr>
       </thead>
-      <tbody>
-        <productItem
-            v-bind:currency="currency"
-            v-bind:currencies="currencies"
-            v-bind:key="product.id"
-            v-bind:params="product"
-            v-for="product in goodsList"
-        />
+      <tbody v-if="goodsList.length">
+        <template v-for="category in goodsList" >
+          <tr v-bind:key="'category' + category.id" class="category text-center">
+            <td colspan="100">{{ category.title }}</td>
+          </tr>
+          <productItem
+              v-bind:currency="currency"
+              v-bind:currencies="currencies"
+              v-bind:key="product.id"
+              v-bind:params="product"
+              v-for="product in category.products"
+          />
+        </template>
       </tbody>
-
+      <tbody v-else>
+        <tr class="category text-center">
+          <td colspan="100">Товара нет в наличии</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>

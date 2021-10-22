@@ -16,8 +16,11 @@
     <div class="col-lg-2">
       <label for="item" class="form-label">Товар:</label>
       <select v-model.number="buyItemId" id="item" class="form-select form-select-sm" aria-label=".form-select-sm example">
-        <option value="0" selected disabled>Выбререте товар</option>
-        <option v-for="{id, title} in goodsList" v-bind:key="id" v-bind:value="id">{{ title }}</option>
+        <option value="0" selected disabled>-- Выбререте товар --</option>
+        <template v-for="category in goodsList">
+          <option v-bind:key="'category' + category.id"  disabled>{{ category.title }}:</option>
+          <option v-for="{id, title} in category.products" v-bind:key="id" v-bind:value="id">{{ title }}</option>
+        </template>
       </select>
     </div>
     <div class="col-lg-2">
@@ -96,7 +99,7 @@ export default {
       agreeCheckbox: true,
       buyRulesAgree: false,
       buyCount: 1,
-      buyItemId: 1,
+      buyItemId: 0,
       buyEmail: "d@m.ru",
       buyPromo: ""
     }
@@ -107,13 +110,23 @@ export default {
         document.querySelector('#item').focus()
         return;
       }
-      let Item = this.goodsList.find(({id}) => id === this.buyItemId);
+      const {products: productCategory} = this.goodsList.find(({ products }) =>
+          products.find(({ id }) => id === this.buyItemId) !== undefined
+      );
+
+      const {
+        min: minCount,
+        max: maxCount,
+        title: productTitle,
+        prices: productPrices
+      } = productCategory.find(({ id }) => id === this.buyItemId);
+
       let { equal: currecny } = this.fundsList.find(({name}) => name === this.buyFund);
 
-      if(Item.min > this.buyCount) {
-        return this.$swal({ icon: 'error', text: `Минимальное количество для покупки ${Item.min} шт.`})
-      } else if(Item.max < this.buyCount) {
-        return this.$swal({ icon: 'error', text: `Максимальное количество для покупки ${Item.max} шт.`})
+      if(minCount > this.buyCount) {
+        return this.$swal({ icon: 'error', text: `Минимальное количество для покупки ${minCount} шт.`})
+      } else if(maxCount < this.buyCount) {
+        return this.$swal({ icon: 'error', text: `Максимальное количество для покупки ${maxCount} шт.`})
       }
 
 
@@ -121,12 +134,12 @@ export default {
         title: '<strong>Подтверждение покупки</strong>',
         html:
         `<ul class="list-group text-start">
-            <li class="list-group-item"><i class="bi bi-cart4"></i> <b>Товар:</b> ${Item.title}</li>
-            <li class="list-group-item"><i class="bi bi-grid-3x3-gap"></i> <b>Количество:</b> ${this.buyCount} шт.</li>
-            <li class="list-group-item"><i class="bi bi-currency-exchange"></i> <b>Валюта:</b> ${this.buyFund}</li>` +
-            (this.buyPromo ? `<li class="list-group-item"><i class="bi bi-currency-exchange"></i> <b>Промокод:</b> ${this.buyPromo}</li>` : '') +
+            <li class="list-group-item"><i class="bi bi-cart4"></i> <b>Товар:</b> ${ productTitle }</li>
+            <li class="list-group-item"><i class="bi bi-grid-3x3-gap"></i> <b>Количество:</b> ${ this.buyCount } шт.</li>
+            <li class="list-group-item"><i class="bi bi-currency-exchange"></i> <b>Валюта:</b> ${ this.buyFund }</li>` +
+            (this.buyPromo ? `<li class="list-group-item"><i class="bi bi-currency-exchange"></i> <b>Промокод:</b> ${ this.buyPromo }</li>` : '') +
             `<li class="list-group-item"><i class="bi bi-at"></i> <b>Email:</b> ${this.buyEmail}</li>
-            <li class="list-group-item"><i class="bi bi-cash-coin"></i> <b>Итого:</b> ${this.buyCount * Item.prices[currecny]} ${this.buyFund}</li>
+            <li class="list-group-item"><i class="bi bi-cash-coin"></i> <b>Итого:</b> ${ this.buyCount * productPrices[currecny]} ${ this.buyFund }</li>
           </ul>`,
         showCloseButton: true,
         showCancelButton: true,
@@ -172,7 +185,7 @@ export default {
                       onclick="this.select()"
                       class="form-control"
                       id="moneyToPay"
-                      value="${this.buyCount * Item.prices[currecny]}"
+                      value="${this.buyCount * productPrices[currecny]}"
                       readonly
                    >
                  <label for="floatingInputValue">К оплате <strong>${this.buyFund}</strong></label>
