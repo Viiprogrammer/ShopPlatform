@@ -30,6 +30,17 @@ export default {
     OrderPanel
   },
   methods: {},
+  mounted() {
+    this.$server.get('/api/shopInfo')
+        .then(() => {
+
+        });
+
+    this.$server.get('/api/goodsList')
+        .then(() => {
+
+        });
+  },
   data () {
     return {
       shopName: "ShopName",
@@ -53,21 +64,31 @@ export default {
         equal: 'rouble',
         disabled: false,
       }],
-      goodsList: new Array(20).fill({
+      goodsList: [{
         id: 1,
-        preview: 'https://via.placeholder.com/50',
-        title: 'Резиновые члены',
-        description: "Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.",
-        fullDescription: "fsdfsdfsdfsdfsdfsdfsdfsd",
-        count: 1000,
-        min: 1,
-        max: 3,
-        type: "STRINGS",
-        prices: {
-          dollar: 100.00,
-          rouble: 6000.00,
-        }
-      })
+        title: 'Аксессуары',
+        products: [{
+          id: 1,
+          preview: 'https://via.placeholder.com/50',
+          title: 'Резиновые члены',
+          description: "Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.Резиновые члены, новые, запакованные.",
+          fullDescription: "fsdfsdfsdfsdfsdfsdfsdfsd",
+          image: {
+            imageUrl: 'https://unsplash.it/600/600',
+            imageWidth: 400,
+            imageHeight: 100,
+            imageAlt: 'Custom image',
+          },
+          count: 1000,
+          min: 1,
+          max: 3,
+          type: "STRINGS",
+          prices: {
+            dollar: 100.00,
+            rouble: 6000.00,
+          }
+        }]
+      }]
     }
   }
 }
